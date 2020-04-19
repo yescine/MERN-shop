@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import {Container,ListGroup,ListGroupItem,Button} from 'reactstrap'
 import {CSSTransition,TransitionGroup} from 'react-transition-group'
 import {v4 as uuid} from 'uuid'
+import { connect } from "react-redux";
+import {getItems} from '../actions/itemActions'
+import PropTypes from 'prop-types'
 
-function ShopingList() {
-   const [item,setItem] = useState([
-      {id:uuid(),name:'egg'},
-      {id:uuid(),name:'splash'},
-      {id:uuid(),name:'water'}
-   ])
+function ShopingList(props) {
+   const [item,setItem] = useState([])
+   useEffect(()=>{
+      props.getItems()
+      const {items} = props.item
+      setItem(items)
+   },[])
+
    return (
       <div>
          <Container>
@@ -45,5 +50,12 @@ function ShopingList() {
       </div>
    )
 }
+ShopingList.protoTypes = {
+   getItems:PropTypes.func.isRequired,
+   item: PropTypes.object.isRequired
+}
 
-export default ShopingList
+const mapStateToProps = (state)=>({
+   item:state.item
+})
+export default connect(mapStateToProps,{getItems})(ShopingList);
