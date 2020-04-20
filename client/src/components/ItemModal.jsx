@@ -17,7 +17,7 @@ function ItemModal(props) {
       e.preventDefault()
       const newItem={
          id:uuid(),
-         name:name
+         name:name.name
       }
       props.addItem(newItem)
       toogle()

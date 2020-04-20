@@ -22,7 +22,7 @@ export default function(state=initialstate,actions) {
       case ADD_ITEM:
          return{
             ...state,
-            items:[actions.payload,...state.items]
+            items:[...state.items,actions.payload]
          }
       default:
          return state;
