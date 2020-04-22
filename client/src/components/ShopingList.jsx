@@ -7,15 +7,10 @@ import {getItems,deleteItem} from '../actions/itemActions'
 import PropTypes from 'prop-types'
 
 function ShopingList(props) {
-   
-   // const [item,setItem] = useState([])
-   // useEffect(()=>{
-   //    props.getItems()
-   //    const {items} = props.item
-   //    setItem(items)
-   // },[])
+   useEffect(()=>{
+      props.getItems()
+   },[]) 
    const item = useSelector(state=>state.item)
-   // const dispatch= useDispatch()
    return (
       <div>
          <Container>
@@ -31,7 +26,7 @@ function ShopingList(props) {
                >add Item #!reducer</Button>:null}
             <ListGroup>
                <TransitionGroup className="shopping-list">
-                  {item.items.map(({id,name})=>(
+                  {item.items.map(({_id,name})=>(
                      <CSSTransition key={name} timeout={500} classNames="fade">
                         <ListGroupItem>
                            <Button
@@ -40,7 +35,7 @@ function ShopingList(props) {
                               size="sm"
                               onClick={()=>{
                                  // setItem(item.filter(item=>item.id!==id))
-                                 props.deleteItem(id)
+                                 props.deleteItem(_id)
                               }}
                            >&times;</Button>
                            {name}
