@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "shooping listing with cruds and react hooks",
   "main": "server.js",
+  "engines": {
+    "node": "10.16.x"
+  },
   "scripts": {
     "client-install":"npm install --prefix client",
     "start": "node server.js",
