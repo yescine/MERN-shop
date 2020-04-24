@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser= require('body-parser');
 const fs = require('fs')
 const ini = require('ini')
+const path = require('path')
 
 const config = ini.parse(fs.readFileSync('./config/data.ini', 'utf-8'))
 const app = express();
@@ -26,5 +27,13 @@ app.options('/url...',(req, res, next)=>{
    res.header("Access-Control-Allow-Headers", "accept, content-type");
    return res.sendStatus(200);
 });
+
+// Serve static assets in production
+if(process.env.NODE_ENV === 'production'){
+   app.use(express.static('client/build'))
+   app.get('*',(req,res)=>{
+      res.sendFile(path.resolve(__dirname,'client','build','index.html'));
+   })
+}
 
 app.listen(port,()=>console.log(`server listening on ${port}`))
