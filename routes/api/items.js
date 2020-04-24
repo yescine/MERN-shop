@@ -1,4 +1,5 @@
 const express = require('express')
+const auth = require('../../middleware/auth')
 
 const app = express()
 
@@ -7,7 +8,7 @@ const Item = require('../../models/Item')
 // @route GET application
 // @desc GET all items
 // @access public
-app.get('/',(req,res)=>{
+app.get('/',auth,(req,res)=>{
    Item.find()
    .sort({date:-1}) 
    .then(items=>res.json(items))
@@ -15,8 +16,8 @@ app.get('/',(req,res)=>{
 
 // @route POST application
 // @desc CREATE all items
-// @access public
-app.post('/',(req,res)=>{
+// @access private
+app.post('/',auth,(req,res)=>{
    const newItem = new Item({
       name:req.body.name
    });
@@ -25,8 +26,8 @@ app.post('/',(req,res)=>{
 
 // @route DELETE application
 // @desc delete one items
-// @access public
-app.delete('/:id',(req,res)=>{
+// @access private
+app.delete('/:id',auth,(req,res)=>{
    Item.findById(req.params.id)
    .then(item=>item.remove().then(()=>res.json({msg:`items deleted: ${item.name}`,sucess:true})))
    .catch(err=>res.status(404).json({sucess:false}))
