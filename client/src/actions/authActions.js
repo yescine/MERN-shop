@@ -30,6 +30,28 @@ export const loadUser = ()=> (dispatch, getState) =>{
          }
       )
 }
+// register
+export const register =({name, email,password})=> dispatch=>{
+   const config= {
+      header:{
+         'Content-type':"application/json"
+      }
+   }
+   // request data 
+   const body=JSON.stringify({name, email,password})
+   axiox.post('http://localhost:5000/api/users',body,config)
+   .then(res=>dispatch({
+      type:REGISTER_SUCCESS,
+      payload:res.data
+   }))
+   .catch(err=>{
+      dispatch(returnErrors(err.response.data,err.response.status,'REGISTER_FAIL'))
+      dispatch({
+         type:REGISTER_FAIL
+      })
+   })
+
+}
 
 export const tokenConfig = getState =>{
    // get token from local storage

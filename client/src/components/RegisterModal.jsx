@@ -1,7 +1,9 @@
-import React ,{useState}from 'react'
-import {Button,Modal,ModalBody,ModalHeader,Form,FormGroup,Label,Input,NavLink} from 'reactstrap'
+import React ,{useState,useEffect}from 'react'
+import {Button,Modal,ModalBody,ModalHeader,Form,FormGroup,Label,Input,NavLink,Alert} from 'reactstrap'
 import {connect} from 'react-redux'
-import propType from 'prop-types'
+import propTypes from 'prop-types'
+import {register} from '../actions/authActions'
+import {clearErrors} from '../actions/errorActions'
 
 function RegisterModal(props) {
    const [modal,setModal] = useState(false)
@@ -9,12 +11,24 @@ function RegisterModal(props) {
    const [email,setEmail] = useState('')
    const [password,setPassword] = useState('')
    const [msg,setMsg] = useState(null)  
+   useEffect(()=>{
+      const {error,isAuthenticated} =props
+      console.log(props);
+      if(error.id==='REGISTER_FAIL'){
+         setMsg(error.msg.msg)
+      }else{
+         setMsg(null)
+      }
+      // if autenicated close model
+      if(modal){
+         if(isAuthenticated){
+            toogle();
+         }
+      }
+   },props)
 
-   propType ={
-      isAuthenticated:propType.bool,
-      error:propType.object.isRequired   
-   }
    const toogle = ()=>{
+      props.clearErrors()
       setModal(!modal)
    }
 
@@ -23,18 +37,25 @@ function RegisterModal(props) {
    }
    const handleOnSubmit =e=>{
       e.preventDefault()
-      const newItem={
-         id:uuid(),
-         name:name.name
+      const newUser={
+         name:name,
+         email:email,
+         password:password
       }
-      props.addItem(newItem)
-      toogle()
+      props.register(newUser)
+      // toogle()
    }
 
    const handleChangeName = (e) =>{
-      setName({[e.target.name]:e.target.value})
+      setName(e.target.value)
    }
 
+   const handleChangeEmail = (e) =>{
+      setEmail(e.target.value)
+   }
+   const handleChangePassword = (e) =>{
+      setPassword(e.target.value)
+   }
    return (
       <div>
       <NavLink onClick={toogle} href="#">
@@ -43,6 +64,7 @@ function RegisterModal(props) {
       <Modal isOpen={modal} toggle={handleToggle}>
         <ModalHeader toggle={handleToggle}>Register</ModalHeader>
         <ModalBody>
+           {msg?<Alert color="danger">{msg}</Alert>:null}
           <Form onSubmit={handleOnSubmit}>
             <FormGroup>
               <Label for="name">Name</Label>
@@ -51,6 +73,7 @@ function RegisterModal(props) {
                 name="name"
                 id="name"
                 placeholder="user name"
+                className="mb-3"
                 onChange={handleChangeName}
               />
 
@@ -60,7 +83,8 @@ function RegisterModal(props) {
                 name="email"
                 id="email"
                 placeholder="user email"
-                onChange={handleChangeName}
+                className="mb-3"
+                onChange={handleChangeEmail}
               />
 
                <Label for="password">password</Label>
@@ -69,10 +93,11 @@ function RegisterModal(props) {
                 name="password"
                 id="password"
                 placeholder="user password"
-                onChange={handleChangeName}
+                className="mb-3"
+                onChange={handleChangePassword}
               />
               <Button color="dark" style={{ marginTop: '2rem' }} block>
-                Add Item
+                Register
               </Button>
             </FormGroup>
           </Form>
@@ -82,9 +107,15 @@ function RegisterModal(props) {
    )
 }
 
+RegisterModal.propTypes = {
+   isAuthenticated:propTypes.bool,
+   error:propTypes.object.isRequired,
+   register:propTypes.func.isRequired,
+   clearErrors:propTypes.func.isRequired
+}
 const mapStateToProps = state =>({
    isAuthenticated:state.isAuthenticated,
    error:state.error
 })
 
-export default connect(mapStateToProps,{})(RegisterModal)
+export default connect(mapStateToProps,{register,clearErrors})(RegisterModal)
